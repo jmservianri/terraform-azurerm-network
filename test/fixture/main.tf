@@ -26,6 +26,13 @@ module "network" {
     "subnet1" : ["Microsoft.Sql"]
   }
 
+  subnet_delegation = {
+    "subnet1": {
+      name    = "Microsoft.ContainerInstance/containerGroups"
+      actions = ["Microsoft.Network/virtualNetworks/subnets/join/action", "Microsoft.Network/virtualNetworks/subnets/prepareNetworkPolicies/action"]
+    }
+  }
+
   tags = {
     environment = "dev"
     costcenter  = "it"

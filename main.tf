@@ -12,6 +12,19 @@ resource "azurerm_virtual_network" "vnet" {
   tags                = var.tags
 }
 
+locals {
+  subnet_delegation = [for key, value in var.subnet_delegation :
+    { key = {
+      name = value.name
+      service_delegation = [{
+        name    = value.service
+        actions = value.actions
+      }]
+      }
+    }
+  ]
+}
+
 resource "azurerm_subnet" "subnet" {
   count                                          = length(var.subnet_names)
   name                                           = var.subnet_names[count.index]
@@ -20,4 +33,5 @@ resource "azurerm_subnet" "subnet" {
   virtual_network_name                           = azurerm_virtual_network.vnet.name
   enforce_private_link_endpoint_network_policies = lookup(var.subnet_enforce_private_link_endpoint_network_policies, var.subnet_names[count.index], false)
   service_endpoints                              = lookup(var.subnet_service_endpoints, var.subnet_names[count.index], [])
+  delegation                                     = lookup(local.subnet_delegation, var.subnet_names[count.index], [])
 }

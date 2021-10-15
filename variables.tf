@@ -60,3 +60,14 @@ variable "subnet_service_endpoints" {
   type        = map(list(string))
   default     = {}
 }
+
+
+variable "subnet_delegation" {
+  description = "A map with key(string) `subnet name`, value (object({name,service,action})) where name is the delegation name, service is service to delegate and actions is the list of actions to delegate on the subnets. Default value is []."
+  type = map(object({
+    name    = string
+    service = string
+    actions = list(string)
+  }))
+  default = {}
+}
