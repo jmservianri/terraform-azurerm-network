@@ -9,8 +9,8 @@ resource "azurerm_virtual_network" "vnet" {
 }
 
 locals {
-  subnet_delegation = [for key, value in var.subnet_delegation :
-    { key = {
+  subnet_delegation = {for key, value in var.subnet_delegation :
+     key => {
       name = value.name
       service_delegation = [{
         name    = value.service
@@ -18,7 +18,6 @@ locals {
       }]
       }
     }
-  ]
 }
 
 resource "azurerm_subnet" "subnet" {
