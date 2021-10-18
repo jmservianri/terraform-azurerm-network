@@ -30,12 +30,15 @@ resource "azurerm_subnet" "subnet" {
   service_endpoints                              = lookup(var.subnet_service_endpoints, var.subnet_names[count.index], [])
 
   dynamic "delegation"{
-    for_each = {"del": lookup(local.subnet_delegation, var.subnet_names[count.index], [])}
+    for_each = {"${var.subnet_names[count.index]}": lookup(local.subnet_delegation, var.subnet_names[count.index], [])}
     content {
       name = delegation.value["name"]
-      service_delegation {
-        name = delegation.value["service_delegation"][0].name
-        actions = delegation.value["service_delegation"][0].actions
+      dynamic "service_delegation" {
+        for_each = delegation.value["service_delegation"]
+        content{
+          name = service_delegation.value.name
+          actions = service_delegation.value.actions
+        }
       }
     }
   }
