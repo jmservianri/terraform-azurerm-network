@@ -34,7 +34,10 @@ resource "azurerm_subnet" "subnet" {
     for_each = lookup(local.subnet_delegation, var.subnet_names[count.index], [])
     content {
       name = delegation.value["name"]
-      service_delegation = delegation.value["service_delegation"]
+      service_delegation {
+        name = delegation.value["service_delegation"][0].name
+        actions = delegation.value["service_delegation"][0].actions
+      }
     }
   }
 }
